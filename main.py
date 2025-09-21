@@ -70,6 +70,13 @@ def interpret_command(query):
         if target:
             return f'rm {target}'
 
+    # --- cd .. command (go back/up) ---
+    if any(phrase in query for phrase in [
+        "go back", "go up", "back", "up one", "parent directory", 
+        "previous directory", "up", "cd ..", "move back", "step back"
+    ]):
+        return "cd .."
+
     # --- cd command ---
     if any(w in words for w in ["go", "navigate", "cd", "enter", "change"]):
         if "directory" in words or "folder" in words or "into" in words or "to" in words:

@@ -3,10 +3,7 @@ import os
 import shutil
 import tempfile
 import uuid
-import platform
 from main import interpret_command
-import threading
-import time
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'  # Change this in production
@@ -236,7 +233,6 @@ You can also use natural language! Try:
 - "show me what's in this directory"
 - "create a folder called test"
 - "go to the documents folder"
-- "go back" or "go up" (same as cd ..)
 - "where am I right now?"
 - "delete the temp folder"
 
