@@ -222,7 +222,7 @@
                         <div class="terminal-button minimize"></div>
                         <div class="terminal-button maximize"></div>
                     </div>
-                    <div class="terminal-title">PyTerm v1.0 - Connected</div>
+                    <div class="terminal-title" id="terminalTitle">PyTerm v1.0 - Connected</div>
                 </div>
                 
                 <div class="help-hint">
@@ -363,9 +363,15 @@
                     }
                 }
 
-                // Update prompt
+                // Update prompt and mode info
                 if (result.prompt) {
                     promptElement.textContent = result.prompt;
+                }
+                
+                // Update terminal title with mode
+                if (result.mode) {
+                    const terminalTitle = document.getElementById('terminalTitle');
+                    terminalTitle.textContent = `PyTerm v1.0 - ${result.mode.mode} MODE`;
                 }
 
             } catch (error) {
@@ -380,15 +386,36 @@
 
         // Welcome message
         addToOutput('Welcome to PyTerm!', 'output');
-        addToOutput('⚡ REAL OS MODE: Commands will interact with your actual file system', 'output');
-        addToOutput('🔒 Security: Operations are restricted to safe directories', 'output');
-        addToOutput('You can use natural language or traditional terminal commands.', 'output');
-        addToOutput('Type "help" for available commands or try phrases like:', 'output');
-        addToOutput('  • "show me what\'s in this directory"', 'output');
-        addToOutput('  • "create a folder called test"', 'output');
-        addToOutput('  • "go to the documents folder"', 'output');
-        addToOutput('  • "where am I right now?"', 'output');
-        addToOutput('', 'output');
+        addToOutput('Detecting environment...', 'output');
+        
+        // Get initial mode info
+        fetch('/execute', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ command: 'mode' })
+        }).then(response => response.json()).then(result => {
+            if (result.mode) {
+                const terminalTitle = document.getElementById('terminalTitle');
+                terminalTitle.textContent = `PyTerm v1.0 - ${result.mode.mode} MODE`;
+                
+                if (result.mode.mode === 'SANDBOX') {
+                    addToOutput('⚡ SANDBOX MODE: Safe demonstration environment', 'output');
+                    addToOutput('🔒 Security: Files are temporary and isolated', 'output');
+                    addToOutput('📥 For full OS access, download the local version', 'output');
+                } else {
+                    addToOutput('⚡ REAL OS MODE: Commands will interact with your actual file system', 'output');
+                    addToOutput('🔒 Security: Operations are restricted to safe directories', 'output');
+                }
+            }
+            
+            addToOutput('You can use natural language or traditional terminal commands.', 'output');
+            addToOutput('Type "help" for available commands or try phrases like:', 'output');
+            addToOutput('  • "show me what\'s in this directory"', 'output');
+            addToOutput('  • "create a folder called test"', 'output');
+            addToOutput('  • "go to the documents folder"', 'output');
+            addToOutput('  • "where am I right now?"', 'output');
+            addToOutput('', 'output');
+        });
     </script>
 </body>
 </html>
