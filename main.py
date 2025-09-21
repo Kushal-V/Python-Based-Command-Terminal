@@ -8,7 +8,7 @@ def interpret_command(query):
     """
     Interprets a natural language query and returns the corresponding terminal command.
     
-    Available commands: ls, cd <directory>, pwd, mkdir <directory_name>, rm <path>
+    Available commands: ls, cd <directory>, pwd, mkdir <directory_name>, rm <path>, sysinfo
     
     Args:
         query (str): Natural language query describing the desired action
@@ -83,6 +83,14 @@ def interpret_command(query):
             return f'cd {target}'
         if len(words) > 1 and words[0] in ["go", "cd", "enter"]:
             return f'cd {target}'
+
+    # --- sysinfo command ---
+    if any(phrase in query for phrase in [
+        "system info", "system information", "sysinfo", "sys info",
+        "show system info", "computer info", "pc info", "hardware info",
+        "cpu usage", "memory usage", "system stats", "performance info"
+    ]):
+        return "sysinfo"
 
     return ""  # no match
 

@@ -227,6 +227,7 @@ rm <path> - Remove file or directory
 history - Show command history
 clear - Clear terminal
 mode - Show current mode information
+sysinfo - Show system information
 help - Show this help message
 
 Current Mode: {mode_info['mode']}
@@ -239,9 +240,40 @@ You can also use natural language! Try:
 - "go back" or "go up" (same as cd ..)
 - "where am I right now?"
 - "delete the temp folder"
+- "show system info" or "computer info"
 
 {'Note: ' + mode_info['warning']}"""
                 return {"output": help_text, "error": "", "success": True}
+            
+            elif command == "sysinfo":
+                try:
+                    if self.is_serverless:
+                        # Limited system info for serverless environment
+                        output = "--- System Information (Serverless) ---\n"
+                        output += f"Platform: {platform.system()}\n"
+                        output += f"Python Version: {platform.python_version()}\n"
+                        output += f"Mode: Sandbox Environment\n"
+                        output += "Note: Limited system access in cloud mode"
+                        return {"output": output, "error": "", "success": True}
+                    else:
+                        # Full system info for local environment
+                        import psutil
+                        output = "--- System Information ---\n"
+                        output += f"Platform: {platform.system()} {platform.release()}\n"
+                        output += f"Python Version: {platform.python_version()}\n"
+                        output += f"CPU Usage: {psutil.cpu_percent(interval=1)}%\n"
+                        output += f"Memory Usage: {psutil.virtual_memory().percent}%\n"
+                        output += f"Available Memory: {psutil.virtual_memory().available / (1024**3):.1f} GB"
+                        return {"output": output, "error": "", "success": True}
+                except ImportError:
+                    # Fallback if psutil is not available
+                    output = "--- System Information (Basic) ---\n"
+                    output += f"Platform: {platform.system()}\n"
+                    output += f"Python Version: {platform.python_version()}\n"
+                    output += "Note: Install 'psutil' for detailed system metrics"
+                    return {"output": output, "error": "", "success": True}
+                except Exception as e:
+                    return {"output": "", "error": f"Error: Could not fetch system info: {str(e)}", "success": False}
             
             else:
                 return {"output": "", "error": f"Error: Command '{command}' not found. Type 'help' for available commands.", "success": False}
