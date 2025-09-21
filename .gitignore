@@ -7,3 +7,6 @@ venv/
 .git/
 *.log
 temp/
+app_old.py
+old_data.txt
+deploy_heroku.*

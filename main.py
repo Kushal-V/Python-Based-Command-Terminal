@@ -4,11 +4,18 @@ import subprocess
 import sys
 import re
 
-import re
-
-import re
-
 def interpret_command(query):
+    """
+    Interprets a natural language query and returns the corresponding terminal command.
+    
+    Available commands: ls, cd <directory>, pwd, mkdir <directory_name>, rm <path>
+    
+    Args:
+        query (str): Natural language query describing the desired action
+        
+    Returns:
+        str: The corresponding terminal command, or empty string if ambiguous/unmappable
+    """
     raw_query = query.strip()
     query = raw_query.lower()
     words = query.split()
@@ -71,144 +78,6 @@ def interpret_command(query):
             return f'cd {target}'
 
     return ""  # no match
-
-    query = query.lower().strip()
-    words = query.split()
-
-    # --- Helper: extract quoted or named target ---
-    target = ""
-    match = re.search(r'["\']([^"\']+)["\']', query)
-    if match:
-        target = match.group(1)  # use the content inside quotes
-    else:
-        # pick word after folder/directory/file/named
-        for key in ["folder", "directory", "file", "named", "into", "to"]:
-            if key in words:
-                idx = words.index(key)
-                if idx + 1 < len(words):
-                    target = words[idx + 1]
-                    break
-        # fallback: last word
-        if not target and len(words) > 1:
-            target = words[-1]
-
-    # clean up target (remove quotes if any remain)
-    target = target.strip("\"'")
-
-    # --- ls command ---
-    if any(phrase in query for phrase in ["show me", "list", "what's in", "whats in", "see files", "ls", "there?"]):
-        if not any(w in words for w in ["create", "make", "delete", "remove", "go", "cd", "where"]):
-            return "ls"
-
-    # --- pwd command ---
-    if any(phrase in query for phrase in ["where am i", "current directory", "pwd", "current path", "where am i right now", "show me the current path"]):
-        return "pwd"
-
-    # --- mkdir command ---
-    if any(w in words for w in ["create", "make"]):
-        if "folder" in words or "directory" in words:
-            return f'mkdir {target}'
-        if len(words) > 1 and words[0] in ["create", "make"]:
-            return f'mkdir {target}'
-
-    # --- rm command ---
-    if any(w in words for w in ["delete", "remove", "rm"]):
-        if target:
-            return f'rm {target}'
-
-    # --- cd command ---
-    if any(w in words for w in ["go", "navigate", "cd", "enter", "change"]):
-        if "directory" in words or "folder" in words or "into" in words or "to" in words:
-            return f'cd {target}'
-        if len(words) > 1 and words[0] in ["go", "cd", "enter"]:
-            return f'cd {target}'
-
-    return ""  # no match
-
-    query = query.lower().strip()
-    words = query.split()
-
-    # --- Helper: extract quoted or named target ---
-    match = re.search(r'["\']([^"\']+)["\']', query)
-    if match:
-        target = match.group(1)  # use quoted name
-    else:
-        # try after keywords
-        for key in ["folder", "directory", "file", "named", "into", "to"]:
-            if key in words:
-                idx = words.index(key)
-                if idx + 1 < len(words):
-                    target = words[idx + 1]
-                    break
-        else:
-            target = words[-1] if len(words) > 1 else ""
-
-    # --- ls command ---
-    if any(phrase in query for phrase in ["show me", "list", "what's in", "whats in", "see files", "ls", "there?"]):
-        if not any(w in words for w in ["create", "make", "delete", "remove", "go", "cd", "where"]):
-            return "ls"
-
-    # --- pwd command ---
-    if any(phrase in query for phrase in ["where am i", "current directory", "pwd", "current path", "where am i right now", "show me the current path"]):
-        return "pwd"
-
-    # --- mkdir command ---
-    if any(w in words for w in ["create", "make"]):
-        if "folder" in words or "directory" in words:
-            return f'mkdir "{target}"'
-        if len(words) > 1 and words[0] in ["create", "make"]:
-            return f'mkdir "{target}"'
-
-    # --- rm command ---
-    if any(w in words for w in ["delete", "remove", "rm"]):
-        if target:
-            return f'rm "{target}"'
-
-    # --- cd command ---
-    if any(w in words for w in ["go", "navigate", "cd", "enter", "change"]):
-        if "directory" in words or "folder" in words or "into" in words or "to" in words:
-            return f'cd "{target}"'
-        if len(words) > 1 and words[0] in ["go", "cd", "enter"]:
-            return f'cd "{target}"'
-
-    return ""  # no match
-    query = query.lower().strip()
-    words = query.split()
-    
-    # ls command
-    if any(phrase in query for phrase in ["show me", "list", "what's in", "see files", "ls"]):
-        if not any(word in words for word in ["create", "make", "delete", "remove", "go", "cd", "where"]):
-            return "ls"
-
-    # pwd command
-    if any(phrase in query for phrase in ["where am i", "current directory", "pwd", "current path"]):
-        return "pwd"
-
-    # mkdir command
-    if any(word in words for word in ["create", "make"]):
-        if "folder" in words or "directory" in words:
-            folder = words[-1].strip("\"'")
-            return f"mkdir {folder}"
-        if len(words) > 1 and words[0] in ["create", "make"]:
-            folder = words[1].strip("\"'")
-            return f"mkdir {folder}"
-
-    # rm command
-    if any(word in words for word in ["delete", "remove", "rm"]):
-        if len(words) > 1:
-            target = words[-1].strip("\"'")
-            return f"rm {target}"
-
-    # cd command
-    if any(word in words for word in ["go", "navigate", "cd", "enter", "change"]):
-        if "directory" in words or "folder" in words or "into" in words or "to" in words:
-            target = words[-1].strip("\"'")
-            return f"cd {target}"
-        if len(words) > 1 and words[0] in ["go", "cd", "enter"]:
-            target = words[1].strip("\"'")
-            return f"cd {target}"
-
-    return ""  # Return empty if no clear command is found
 
 def main():
     command_history = []

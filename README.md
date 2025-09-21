@@ -2,7 +2,7 @@
 
 A modern web-based terminal that understands natural language commands and converts them to traditional terminal operations.
 
-🌐 **Live Demo**: [Try PyTerm Online](https://your-app-name.herokuapp.com) *(Sandbox environment)*  
+🌐 **Live Demo**: [PyTerm on Vercel](https://python-based-command-terminal.vercel.app) *(Sandbox environment)*  
 📥 **Download**: [Full Version](https://github.com/Kushal-V/Python-Based-Command-Terminal/releases) *(Access your real OS)*
 
 ## 🚀 Quick Start
@@ -57,23 +57,16 @@ chmod +x install_local.sh
 
 ### For Developers - Host Your Own:
 
-#### Heroku (Free Tier):
+#### Vercel (Recommended - Free):
 ```bash
 git clone https://github.com/Kushal-V/Python-Based-Command-Terminal.git
 cd Python-Based-Command-Terminal
-heroku create your-app-name
-git push heroku main
+# Push to your GitHub, then connect to Vercel
 ```
 
-#### Railway:
-1. Fork this repository
-2. Connect to Railway
-3. Deploy automatically
-
-#### DigitalOcean App Platform:
-1. Fork this repository  
-2. Create new app from GitHub
-3. Configure build settings
+#### Alternative Platforms:
+- **Railway**: Connect GitHub repo for auto-deployment
+- **Heroku**: Use provided Procfile for deployment
 
 ### For Users - Local Installation:
 
